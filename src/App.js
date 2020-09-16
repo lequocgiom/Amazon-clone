@@ -1,10 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Header from "./Header";
 import Home from "./Home";
 import Checkout from "./Checkout";
+import { useStateValue } from "./StateProvider";
+import { auth } from "./firebase";
+import Login from "./Login";
 function App() {
+  const [{}, dispatch] = useStateValue();
+
+  useEffect(() => {
+    // will only run once when the app component loads...
+
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      console.log("THE USER IS >>> ", authUser);
+
+      if (authUser) {
+        // the user just logged in / the user was logged in
+
+        dispatch({
+          type: "SET_USER",
+          user: authUser,
+        });
+      } else {
+        // the user is logged out
+        dispatch({
+          type: "SET_USER",
+          user: null,
+        });
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   // BEM
   return (
     <Router>
@@ -15,7 +47,7 @@ function App() {
             <h1 className="">Orders</h1>
           </Route>
           <Route path="/login">
-            <h1>Login</h1>
+            <Login />
           </Route>
           <Route path="/checkout">
             <Header />
