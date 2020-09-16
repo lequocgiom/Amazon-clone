@@ -51,7 +51,7 @@ function App() {
         <Switch>
           <Route path="/orders">
             <Header />
-            <h1 className="">Orders</h1>
+            <Orders />
           </Route>
           <Route path="/login">
             <Login />
